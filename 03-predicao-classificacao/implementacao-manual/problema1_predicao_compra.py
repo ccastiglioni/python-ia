@@ -206,7 +206,7 @@ plt.tight_layout()
 plt.savefig(
     os.path.join(
         pasta_resultados,
-        'grafico_problema1_manual.png'
+        'grafico_problema_1_manual.png'
     ),
     dpi=150
 )
