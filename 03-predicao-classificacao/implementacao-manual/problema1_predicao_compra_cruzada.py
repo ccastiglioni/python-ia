@@ -266,29 +266,32 @@ df_resultados.to_csv(
     index=False,
 )
 
+# ------------------------------------------------------------
+# 10. Gráfico - F1 Treino vs F1 Validação Cruzada
+# ------------------------------------------------------------
 
-# 10. Gráfico: F1 médio de treino vs F1 médio de validação cruzada
-plt.figure(figsize=(12, 6))
+plt.figure(figsize=(13, 7))
 
 bar_width = 0.35
 index = np.arange(len(df_resultados))
 
-plt.bar(
+barras_treino = plt.bar(
     index,
     df_resultados['F1_Treino_Media'],
     bar_width,
-    label='F1 Treino (média)',
+    label='F1 Treino (média)'
 )
 
-plt.bar(
+barras_cv = plt.bar(
     index + bar_width,
     df_resultados['F1_CV_Media'],
     bar_width,
-    label='F1 Validação Cruzada (média)',
+    label='F1 Validação Cruzada (média)'
 )
 
 plt.xlabel('Modelo')
 plt.ylabel('F1-Score (Macro)')
+
 plt.title(
     'Problema 1 - F1 Treino vs Validação Cruzada '
     '(5-Fold StratifiedKFold)'
@@ -298,19 +301,61 @@ plt.xticks(
     index + bar_width / 2,
     df_resultados['Modelo'],
     rotation=45,
-    ha='right',
+    ha='right'
 )
 
 plt.legend()
+
+# ============================================================
+# Mostrar posição no ranking + F1 CV diretamente nas barras
+# ============================================================
+
+ranking_cv = {
+    'SVM': ('1º', 0.6785),
+    'Naive Bayes': ('2º', 0.6621),
+    'Logistic Regression': ('3º', 0.6608),
+    'KNN': ('4º', 0.6458),
+    'Random Forest': ('5º', 0.6344),
+    'Gradient Boosting': ('6º', 0.6314),
+    'Decision Tree': ('7º', 0.6176),
+}
+
+for i, row in df_resultados.iterrows():
+
+    nome = row['Modelo']
+
+    posicao, valor = ranking_cv[nome]
+
+    plt.text(
+        i + bar_width,
+        valor + 0.015,
+        f'{posicao}\n{valor:.4f}',
+        ha='center',
+        va='bottom',
+        fontsize=10,
+        fontweight='bold'
+    )
+
+plt.ylim(0, 1.12)
+
+plt.grid(
+    axis='y',
+    linestyle='--',
+    alpha=0.7
+)
+
 plt.tight_layout()
-plt.grid(axis='y', linestyle='--', alpha=0.7)
 
 arquivo_grafico = os.path.join(
     pasta_resultados,
-    'grafico_problema1_validacao_cruzada.png',
+    'grafico_problema1_validacao_cruzada.png'
 )
 
-plt.savefig(arquivo_grafico, dpi=150)
+plt.savefig(
+    arquivo_grafico,
+    dpi=150
+)
+
 plt.close()
 
 print()
@@ -318,6 +363,7 @@ print(
     "Resultados exportados para "
     "'resultados/resultados_problema1_validacao_cruzada.csv'"
 )
+
 print(
     "Gráfico salvo em "
     "'resultados/grafico_problema1_validacao_cruzada.png'"

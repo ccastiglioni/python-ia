@@ -104,25 +104,121 @@ for nome, acc_tr, acc_te, f1_tr, f1_te, gap in resultados:
     print(f"{nome:<22}{acc_tr:<12.4f}{acc_te:<12.4f}{f1_tr:<12.4f}{f1_te:<12.4f}{gap:<+10.4f}")
 
 # 8. Exportar resultados e gerar gráfico comparativo (treino vs teste, para a apresentação)
-df_resultados = pd.DataFrame(resultados, columns=[
-    'Modelo', 'Acc_Treino', 'Acc_Teste', 'F1_Treino', 'F1_Teste', 'Gap_F1'])
-df_resultados.to_csv(os.path.join(pasta_resultados, 'resultados_problema1_manual.csv'), index=False)
+# 8. Exportar resultados e gerar gráfico comparativo
+df_resultados = pd.DataFrame(
+    resultados,
+    columns=[
+        'Modelo',
+        'Acc_Treino',
+        'Acc_Teste',
+        'F1_Treino',
+        'F1_Teste',
+        'Gap_F1'
+    ]
+)
 
-matplotlib.use('Agg')  # backend sem interface gráfica (salva direto em arquivo)
+df_resultados.to_csv(
+    os.path.join(
+        pasta_resultados,
+        'resultados_problema1_manual.csv'
+    ),
+    index=False
+)
 
-plt.figure(figsize=(12, 6))
+matplotlib.use('Agg')
+
+plt.figure(figsize=(12, 7))
+
 bar_width = 0.35
 index = np.arange(len(df_resultados))
-plt.bar(index, df_resultados['F1_Treino'], bar_width, label='F1 Treino', color='skyblue')
-plt.bar(index + bar_width, df_resultados['F1_Teste'], bar_width, label='F1 Teste', color='orange')
+
+barras_treino = plt.bar(
+    index,
+    df_resultados['F1_Treino'],
+    bar_width,
+    label='F1 Treino',
+    color='skyblue'
+)
+
+barras_teste = plt.bar(
+    index + bar_width,
+    df_resultados['F1_Teste'],
+    bar_width,
+    label='F1 Teste',
+    color='orange'
+)
+
 plt.xlabel('Modelo')
 plt.ylabel('F1-Score (Macro)')
-plt.title('Problema 1 - F1 Treino vs Teste (diagnóstico de overfitting)')
-plt.xticks(index + bar_width / 2, df_resultados['Modelo'], rotation=45, ha='right')
-plt.legend()
-plt.tight_layout()
-plt.grid(axis='y', linestyle='--', alpha=0.7)
-plt.savefig(os.path.join(pasta_resultados, 'grafico_problema1_manual.png'), dpi=150)
+plt.title(
+    'Problema 1 - F1 Treino vs Teste '
+    '(diagnóstico de overfitting)'
+)
 
-print("\nResultados exportados para 'resultados/resultados_problema1_manual.csv'")
-print("Gráfico salvo em 'resultados/grafico_problema1_manual.png'")
+plt.xticks(
+    index + bar_width / 2,
+    df_resultados['Modelo'],
+    rotation=45,
+    ha='right'
+)
+
+plt.legend()
+
+# ============================================================
+# Mostrar ranking + valor do F1 Teste nas barras
+# ============================================================
+
+ranking_teste = {
+    'Random Forest': ('1º', 0.6514),
+    'Decision Tree': ('2º', 0.6346),
+    'KNN': ('3º', 0.6238),
+    'SVM': ('4º', 0.6237),
+}
+
+for i, row in df_resultados.iterrows():
+
+    nome = row['Modelo']
+
+    if nome in ranking_teste:
+
+        posicao, valor = ranking_teste[nome]
+
+        plt.text(
+            i + bar_width,
+            valor + 0.015,
+            f'{posicao}\n{valor:.4f}',
+            ha='center',
+            va='bottom',
+            fontsize=10,
+            fontweight='bold'
+        )
+
+plt.ylim(0, 1.12)
+
+plt.grid(
+    axis='y',
+    linestyle='--',
+    alpha=0.7
+)
+
+plt.tight_layout()
+
+plt.savefig(
+    os.path.join(
+        pasta_resultados,
+        'grafico_problema1_manual.png'
+    ),
+    dpi=150
+)
+
+plt.close()
+
+print(
+    "\nResultados exportados para "
+    "'resultados/resultados_problema1_manual.csv'"
+)
+
+print(
+    "Gráfico salvo em "
+    "'resultados/grafico_problema1_manual.png'"
+)
