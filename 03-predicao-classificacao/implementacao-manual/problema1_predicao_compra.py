@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+import matplotlib
 import os
 import numpy as np
 import pandas as pd
@@ -37,8 +39,7 @@ X = df[features]
 y = df[target]
 
 # 3. Divisão treino/teste com estratificação (mesma metodologia do exemplo base da glicose)
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.3, random_state=42, stratify=y)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42, stratify=y)
 
 # 4. Padronizar (necessário para SVM e KNN; não atrapalha os demais)
 scaler = StandardScaler()
@@ -107,9 +108,7 @@ df_resultados = pd.DataFrame(resultados, columns=[
     'Modelo', 'Acc_Treino', 'Acc_Teste', 'F1_Treino', 'F1_Teste', 'Gap_F1'])
 df_resultados.to_csv(os.path.join(pasta_resultados, 'resultados_problema1_manual.csv'), index=False)
 
-import matplotlib
 matplotlib.use('Agg')  # backend sem interface gráfica (salva direto em arquivo)
-import matplotlib.pyplot as plt
 
 plt.figure(figsize=(12, 6))
 bar_width = 0.35
